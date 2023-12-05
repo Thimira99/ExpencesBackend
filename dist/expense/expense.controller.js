@@ -34,18 +34,18 @@ let ExpenseController = class ExpenseController {
             console.log(updatedExpense);
             const result = await this.expenseService.updateById(id, updatedExpense);
             if (!result) {
-                throw new common_1.NotFoundException('Expense not found');
+                throw new common_1.NotFoundException("Expense not found");
             }
-            return { message: 'Expense updated successfully' };
+            return { message: "Expense updated successfully" };
         }
         catch (error) {
-            return { message: 'Error updating expense' };
+            return { message: "Error updating expense" };
         }
     }
     async getExpenseById(id) {
         const expense = await this.expenseService.findById(id);
         if (!expense) {
-            throw new common_1.NotFoundException('Expense not found');
+            throw new common_1.NotFoundException("Expense not found");
         }
         return expense;
     }
@@ -54,35 +54,21 @@ let ExpenseController = class ExpenseController {
             const deletedExpense = await this.expenseService.deleteById(id);
             console.log(deletedExpense);
             if (!deletedExpense) {
-                return { message: 'Expense not found' };
+                return { message: "Expense not found" };
             }
-            return { message: 'Expense deleted successfully' };
+            return { message: "Expense deleted successfully" };
         }
         catch (error) {
-            return { message: 'Error deleting expense' };
+            return { message: "Error deleting expense" };
         }
     }
-    async getMaxByCategory(category, req) {
-        const maxExpense = await this.expenseService.getMaxByCategory(category, req.user);
-        if (!maxExpense) {
-            throw new common_1.NotFoundException('No expenses found for the specified category');
-        }
-        return maxExpense;
+    async getFilteredValues(query, req) {
+        const user = req.user;
+        return this.expenseService.getFilteredValues(user, query);
     }
-    async getMinByCategory(category, req) {
-        const minExpense = await this.expenseService.getMinByCategory(category, req.user);
-        if (!minExpense) {
-            throw new common_1.NotFoundException('No expenses found for the specified category');
-        }
-        return minExpense;
-    }
-    async getMonthlyAverage(req) {
-        const userId = req.user._id;
-        return this.expenseService.getMonthlyAverage(userId);
-    }
-    async getDailyAverage(req) {
-        const userId = req.user._id;
-        return this.expenseService.getDailyAverage(userId);
+    async getMonthlyValues(query, req) {
+        const user = req.user;
+        return this.expenseService.getMonthlyValues(user, query);
     }
 };
 __decorate([
@@ -104,66 +90,50 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ExpenseController.prototype, "createExpense", null);
 __decorate([
-    (0, common_1.Put)(':id'),
+    (0, common_1.Put)(":id"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)("id")),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_expense_dto_1.UpdateExpenseDto]),
     __metadata("design:returntype", Promise)
 ], ExpenseController.prototype, "updateExpense", null);
 __decorate([
-    (0, common_1.Get)(':id'),
+    (0, common_1.Get)(":id"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ExpenseController.prototype, "getExpenseById", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
+    (0, common_1.Delete)(":id"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)("id")),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ExpenseController.prototype, "deleteExpense", null);
 __decorate([
-    (0, common_1.Get)('max/:category'),
+    (0, common_1.Get)("filter/filteredvaluesByDay"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Param)('category')),
+    __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], ExpenseController.prototype, "getMaxByCategory", null);
+], ExpenseController.prototype, "getFilteredValues", null);
 __decorate([
-    (0, common_1.Get)('min/:category'),
+    (0, common_1.Get)("filter/filteredvaluesByMonth"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Param)('category')),
+    __param(0, (0, common_1.Query)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
-], ExpenseController.prototype, "getMinByCategory", null);
-__decorate([
-    (0, common_1.Get)('monthly-average'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], ExpenseController.prototype, "getMonthlyAverage", null);
-__decorate([
-    (0, common_1.Get)('daily-average'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
-    __param(0, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], ExpenseController.prototype, "getDailyAverage", null);
+], ExpenseController.prototype, "getMonthlyValues", null);
 ExpenseController = __decorate([
-    (0, common_1.Controller)('expense'),
+    (0, common_1.Controller)("expense"),
     __metadata("design:paramtypes", [expense_service_1.ExpenseService])
 ], ExpenseController);
 exports.ExpenseController = ExpenseController;

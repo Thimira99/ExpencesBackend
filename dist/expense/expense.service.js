@@ -24,16 +24,19 @@ let ExpenseService = class ExpenseService {
         this.expenseModel = expenseModel;
         this.userModel = userModel;
     }
+    getMonthIndex(monthName) {
+        return dateMonthsName_1.months.findIndex((m) => m.toLowerCase() === monthName.toLowerCase());
+    }
     async findAll(query, user) {
         const resPerPage = Number(query.perPage);
         let userId = user._id;
         const currentPage = Number(query.page) || 1;
         const skip = resPerPage * (currentPage - 1);
-        let category = query.category || 'All';
+        let category = query.category || "All";
         const avalibale = await this.userModel.getUserCategories(userId);
-        category === 'All'
+        category === "All"
             ? (category = [...avalibale])
-            : (category = query.category).split(',');
+            : (category = query.category).split(",");
         const queryn = {
             user: userId,
             category: { $in: category },
@@ -57,7 +60,7 @@ let ExpenseService = class ExpenseService {
     async updateById(id, updatedExpense) {
         const existingExpense = await this.expenseModel.findById(id);
         if (!existingExpense) {
-            throw new common_1.NotFoundException('Expense not found');
+            throw new common_1.NotFoundException("Expense not found");
         }
         Object.assign(existingExpense, updatedExpense);
         return await existingExpense.save();
@@ -65,79 +68,85 @@ let ExpenseService = class ExpenseService {
     async deleteById(id) {
         return await this.expenseModel.findByIdAndDelete(id);
     }
-    async getMaxByCategory(category, user) {
+    async getFilteredValues(user, query) {
         const userId = user._id;
-        const query = {
-            user: userId,
-            category,
+        const calculatedType = query.calculatedType;
+        const userCategories = await this.userModel.getUserCategories(userId);
+        const filterCategories = async (category) => {
+            const categoryQuery = {
+                user: userId,
+                category,
+                date: query.date,
+            };
+            const expenses = await this.expenseModel.find(categoryQuery).exec();
+            if (!expenses || expenses.length === 0) {
+                return { [category]: 0 };
+            }
+            switch (calculatedType) {
+                case "max":
+                    return {
+                        [category]: Math.max(...expenses.map((expense) => expense.amount)),
+                    };
+                case "min":
+                    return {
+                        [category]: Math.min(...expenses.map((expense) => expense.amount)),
+                    };
+                case "average":
+                    const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                    const average = totalAmount / expenses.length;
+                    return { [category]: average };
+                case "total":
+                    const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                    return { [category]: total };
+                default:
+                    throw new common_1.NotFoundException("Invalid calculatedType");
+            }
         };
-        const maxExpense = await this.expenseModel
-            .findOne(query)
-            .sort({ amount: -1 })
-            .exec();
-        return maxExpense;
+        const results = await Promise.all(userCategories.map(filterCategories));
+        const mergedResults = results.reduce((acc, result) => (Object.assign(Object.assign({}, acc), result)), {});
+        return mergedResults;
     }
-    async getMinByCategory(category, user) {
+    async getMonthlyValues(user, query) {
         const userId = user._id;
-        const query = {
-            user: userId,
-            category,
+        const monthName = query.month;
+        const calculatedType = query.calculatedType;
+        const userCategories = await this.userModel.getUserCategories(userId);
+        const filterCategories = async (category) => {
+            const monthIndex = this.getMonthIndex(monthName);
+            if (monthIndex === -1) {
+                throw new common_1.NotFoundException("Invalid month name");
+            }
+            const query = {
+                user: userId,
+                category,
+                date: {
+                    $gte: new Date(new Date().getFullYear(), monthIndex, 1),
+                    $lt: new Date(new Date().getFullYear(), monthIndex + 1, 1),
+                },
+            };
+            const expenses = await this.expenseModel.find(query).exec();
+            if (!expenses || expenses.length === 0) {
+                return { [category]: 0 };
+            }
+            switch (calculatedType) {
+                case "max":
+                    return {
+                        [category]: Math.max(...expenses.map((expense) => expense.amount)),
+                    };
+                case "average":
+                    const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                    const average = totalAmount / expenses.length;
+                    return { [category]: average };
+                case "total":
+                    const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+                    return { [category]: total };
+                default:
+                    throw new common_1.NotFoundException("Invalid calculatedType");
+            }
         };
-        const maxExpense = await this.expenseModel
-            .findOne(query)
-            .sort({ amount: 1 })
-            .exec();
-        return maxExpense;
-    }
-    async getMonthlyAverage(userId) {
-        const monthlyAverage = await this.expenseModel
-            .aggregate([
-            {
-                $match: { user: new mongoose.Types.ObjectId(userId) },
-            },
-            {
-                $group: {
-                    _id: {
-                        month: { $month: '$date' },
-                    },
-                    average: { $avg: { $toDouble: '$amount' } },
-                },
-            },
-            {
-                $sort: { '_id.month': 1 },
-            },
-        ])
-            .exec();
-        return monthlyAverage.map((result) => ({
-            month: (0, dateMonthsName_1.getMonthName)(result._id.month),
-            average: result.average,
-        }));
-    }
-    async getDailyAverage(userId) {
-        const dailyAverage = await this.expenseModel
-            .aggregate([
-            {
-                $match: { user: new mongoose.Types.ObjectId(userId) },
-            },
-            {
-                $group: {
-                    _id: {
-                        date: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
-                        dayOfWeek: { $dayOfWeek: '$date' },
-                    },
-                    average: { $avg: { $toDouble: '$amount' } },
-                },
-            },
-            {
-                $sort: { '_id.date': 1 },
-            },
-        ])
-            .exec();
-        return dailyAverage.map((result) => ({
-            date: result._id.date,
-            day: (0, dateMonthsName_1.getDayName)(result._id.dayOfWeek),
-            average: result.average,
-        }));
+        const results = await Promise.all(userCategories.map(filterCategories));
+        const mergedResults = results.reduce((acc, result) => (Object.assign(Object.assign({}, acc), result)), {});
+        return mergedResults;
     }
 };
 ExpenseService = __decorate([
