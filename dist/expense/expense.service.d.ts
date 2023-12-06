@@ -20,4 +20,10 @@ export declare class ExpenseService {
     getMonthlyValues(user: User, query: Query): Promise<{
         [key: string]: number;
     }>;
+    getCategoriesMonthToDate(user: User, query: Query): Promise<{
+        [key: string]: number;
+    }>;
+    getCategoriesYearToDate(user: User, query: Query): Promise<{
+        [key: string]: number;
+    }>;
 }

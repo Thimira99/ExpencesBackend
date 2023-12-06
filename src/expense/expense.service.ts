@@ -217,4 +217,97 @@ export class ExpenseService {
 
     return mergedResults;
   }
+
+  // Add this method in ExpenseService class
+  async getCategoriesMonthToDate(
+    user: User,
+    query: Query
+  ): Promise<{ [key: string]: number }> {
+    const userId = user._id;
+
+    // Convert the date string to a JavaScript Date object
+    const specifiedDate = new Date(query.date as string);
+
+    const userCategories = await this.userModel.getUserCategories(userId);
+
+    const filterCategories = async (
+      category: string
+    ): Promise<{ [key: string]: number }> => {
+      const query = {
+        user: userId,
+        category,
+        date: {
+          $gte: new Date(
+            specifiedDate.getFullYear(),
+            specifiedDate.getMonth(),
+            1
+          ),
+          $lt: specifiedDate,
+        },
+      };
+
+      const expenses = await this.expenseModel.find(query).exec();
+
+      if (!expenses || expenses.length === 0) {
+        return { [category]: 0 };
+      }
+
+      const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      return { [category]: total };
+    };
+
+    const results = await Promise.all(userCategories.map(filterCategories));
+
+    // Merge the individual results into a single object
+    const mergedResults = results.reduce(
+      (acc, result) => ({ ...acc, ...result }),
+      {}
+    );
+
+    return mergedResults;
+  }
+
+  // Modify this method in ExpenseService class
+  async getCategoriesYearToDate(
+    user: User,
+    query: Query
+  ): Promise<{ [key: string]: number }> {
+    const userId = user._id;
+
+    const specifiedDate = new Date(query.date as string);
+
+    const userCategories = await this.userModel.getUserCategories(userId);
+
+    const filterCategories = async (
+      category: string
+    ): Promise<{ [key: string]: number }> => {
+      const query = {
+        user: userId,
+        category,
+        date: {
+          $gte: new Date(specifiedDate.getFullYear(), 0, 1), // Start of the year
+          $lt: specifiedDate,
+        },
+      };
+
+      const expenses = await this.expenseModel.find(query).exec();
+
+      if (!expenses || expenses.length === 0) {
+        return { [category]: 0 };
+      }
+
+      const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      return { [category]: total };
+    };
+
+    const results = await Promise.all(userCategories.map(filterCategories));
+
+    // Merge the individual results into a single object
+    const mergedResults = results.reduce(
+      (acc, result) => ({ ...acc, ...result }),
+      {}
+    );
+
+    return mergedResults;
+  }
 }

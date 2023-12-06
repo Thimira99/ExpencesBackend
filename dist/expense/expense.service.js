@@ -148,6 +148,54 @@ let ExpenseService = class ExpenseService {
         const mergedResults = results.reduce((acc, result) => (Object.assign(Object.assign({}, acc), result)), {});
         return mergedResults;
     }
+    async getCategoriesMonthToDate(user, query) {
+        const userId = user._id;
+        const specifiedDate = new Date(query.date);
+        const userCategories = await this.userModel.getUserCategories(userId);
+        const filterCategories = async (category) => {
+            const query = {
+                user: userId,
+                category,
+                date: {
+                    $gte: new Date(specifiedDate.getFullYear(), specifiedDate.getMonth(), 1),
+                    $lt: specifiedDate,
+                },
+            };
+            const expenses = await this.expenseModel.find(query).exec();
+            if (!expenses || expenses.length === 0) {
+                return { [category]: 0 };
+            }
+            const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            return { [category]: total };
+        };
+        const results = await Promise.all(userCategories.map(filterCategories));
+        const mergedResults = results.reduce((acc, result) => (Object.assign(Object.assign({}, acc), result)), {});
+        return mergedResults;
+    }
+    async getCategoriesYearToDate(user, query) {
+        const userId = user._id;
+        const specifiedDate = new Date(query.date);
+        const userCategories = await this.userModel.getUserCategories(userId);
+        const filterCategories = async (category) => {
+            const query = {
+                user: userId,
+                category,
+                date: {
+                    $gte: new Date(specifiedDate.getFullYear(), 0, 1),
+                    $lt: specifiedDate,
+                },
+            };
+            const expenses = await this.expenseModel.find(query).exec();
+            if (!expenses || expenses.length === 0) {
+                return { [category]: 0 };
+            }
+            const total = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+            return { [category]: total };
+        };
+        const results = await Promise.all(userCategories.map(filterCategories));
+        const mergedResults = results.reduce((acc, result) => (Object.assign(Object.assign({}, acc), result)), {});
+        return mergedResults;
+    }
 };
 ExpenseService = __decorate([
     (0, common_1.Injectable)(),

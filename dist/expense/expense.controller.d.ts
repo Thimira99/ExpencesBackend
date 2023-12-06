@@ -21,4 +21,10 @@ export declare class ExpenseController {
     getMonthlyValues(query: ExpressQuery, req: any): Promise<{
         [key: string]: number;
     }>;
+    getCategoriesYearToDate(query: ExpressQuery, req: any): Promise<{
+        [key: string]: number;
+    }>;
+    getCategoriesMonthToDate(query: ExpressQuery, req: any): Promise<{
+        [key: string]: number;
+    }>;
 }

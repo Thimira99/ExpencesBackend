@@ -94,66 +94,6 @@ export class ExpenseController {
     }
   }
 
-  // // Get max by category
-  // @Get("max/:category")
-  // @UseGuards(AuthGuard())
-  // async getMaxByCategory(
-  //   @Param("category") category: string,
-  //   @Req() req
-  // ): Promise<Expense | null> {
-  //   const maxExpense = await this.expenseService.getMaxByCategory(
-  //     category,
-  //     req.user
-  //   );
-
-  //   if (!maxExpense) {
-  //     throw new NotFoundException(
-  //       "No expenses found for the specified category"
-  //     );
-  //   }
-
-  //   return maxExpense;
-  // }
-
-  // // Get min by category
-  // @Get("min/:category")
-  // @UseGuards(AuthGuard())
-  // async getMinByCategory(
-  //   @Param("category") category: string,
-  //   @Req() req
-  // ): Promise<Expense | null> {
-  //   const minExpense = await this.expenseService.getMinByCategory(
-  //     category,
-  //     req.user
-  //   );
-
-  //   if (!minExpense) {
-  //     throw new NotFoundException(
-  //       "No expenses found for the specified category"
-  //     );
-  //   }
-
-  //   return minExpense;
-  // }
-
-  // @Get("get/maxperday")
-  // @UseGuards(AuthGuard())
-  // async getMaxExpensesByDay(@Req() req): Promise<number[]> {
-  //   // Assuming you have the user information from the JWT token
-  //   const user = req.user;
-  //   return this.expenseService.getMaxExpensesByDay(user);
-  // }
-
-  // // Get maximum expenses by month
-  // @Get("get/maxpermonth")
-  // @UseGuards(AuthGuard())
-  // async getMaxExpensesByMonth(@Req() req): Promise<number[]> {
-  //   // Assuming you have the user information from the JWT token
-  //   const user = req.user;
-
-  //   return this.expenseService.getMaxExpensesByMonth(user);
-  // }
-
   @Get("filter/filteredvaluesByDay")
   @UseGuards(AuthGuard())
   async getFilteredValues(
@@ -173,5 +113,29 @@ export class ExpenseController {
     const user = req.user;
 
     return this.expenseService.getMonthlyValues(user, query);
+  }
+
+  @Get("categories/year-to-date")
+  @UseGuards(AuthGuard())
+  async getCategoriesYearToDate(@Query() query: ExpressQuery, @Req() req) {
+    const user = req.user;
+
+    // Call the service method to get total expenses for categories year-to-date
+    const result = await this.expenseService.getCategoriesYearToDate(
+      user,
+      query
+    );
+    return result;
+  }
+  @Get("categories/month-to-date")
+  @UseGuards(AuthGuard())
+  async getCategoriesMonthToDate(@Query() query: ExpressQuery, @Req() req) {
+    const user = req.user;
+    // Call the service method to get total expenses for categories from the beginning of the month to the specified date
+    const result = await this.expenseService.getCategoriesMonthToDate(
+      user,
+      query
+    );
+    return result;
   }
 }

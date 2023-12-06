@@ -70,6 +70,16 @@ let ExpenseController = class ExpenseController {
         const user = req.user;
         return this.expenseService.getMonthlyValues(user, query);
     }
+    async getCategoriesYearToDate(query, req) {
+        const user = req.user;
+        const result = await this.expenseService.getCategoriesYearToDate(user, query);
+        return result;
+    }
+    async getCategoriesMonthToDate(query, req) {
+        const user = req.user;
+        const result = await this.expenseService.getCategoriesMonthToDate(user, query);
+        return result;
+    }
 };
 __decorate([
     (0, common_1.Get)(),
@@ -132,6 +142,24 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], ExpenseController.prototype, "getMonthlyValues", null);
+__decorate([
+    (0, common_1.Get)("categories/year-to-date"),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ExpenseController.prototype, "getCategoriesYearToDate", null);
+__decorate([
+    (0, common_1.Get)("categories/month-to-date"),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ExpenseController.prototype, "getCategoriesMonthToDate", null);
 ExpenseController = __decorate([
     (0, common_1.Controller)("expense"),
     __metadata("design:paramtypes", [expense_service_1.ExpenseService])
