@@ -46,8 +46,6 @@ export class ExpenseService {
       .limit(resPerPage)
       .skip(skip);
 
-    console.log(expenses);
-
     return expenses;
   }
 
@@ -59,7 +57,6 @@ export class ExpenseService {
   // Create expenses
   async create(expense: Expense, user: User): Promise<Expense> {
     const data = Object.assign(expense, { user: user._id });
-    console.log(data);
 
     const res = await this.expenseModel.create(data);
     return res;
@@ -87,8 +84,8 @@ export class ExpenseService {
     return await this.expenseModel.findByIdAndDelete(id);
   }
 
-  // Get day values
-  async getFilteredValues(
+  // Get dailyvalues
+  async getDailyValues(
     user: User,
     query: Query
   ): Promise<{ [key: string]: number }> {
@@ -218,7 +215,7 @@ export class ExpenseService {
     return mergedResults;
   }
 
-  // Add this method in ExpenseService class
+  // Get month to date categories
   async getCategoriesMonthToDate(
     user: User,
     query: Query
@@ -267,7 +264,7 @@ export class ExpenseService {
     return mergedResults;
   }
 
-  // Modify this method in ExpenseService class
+  // Get year to date categories
   async getCategoriesYearToDate(
     user: User,
     query: Query

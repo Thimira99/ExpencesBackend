@@ -23,7 +23,6 @@ import { UpdateExpenseDto } from "./dto/update-expense.dto";
 export class ExpenseController {
   constructor(private expenseService: ExpenseService) {}
 
-  // Get
   @Get()
   @UseGuards(AuthGuard())
   async getAllExpenses(
@@ -33,7 +32,6 @@ export class ExpenseController {
     return this.expenseService.findAll(query, req.user);
   }
 
-  // Post
   @Post()
   @UseGuards(AuthGuard())
   async createExpense(
@@ -44,7 +42,6 @@ export class ExpenseController {
     return this.expenseService.create(expense, req.user);
   }
 
-  // Update
   @Put(":id")
   @UseGuards(AuthGuard())
   async updateExpense(
@@ -52,8 +49,6 @@ export class ExpenseController {
     @Body() updatedExpense: UpdateExpenseDto
   ): Promise<{ message: string }> {
     try {
-      console.log(id);
-      console.log(updatedExpense);
       const result = await this.expenseService.updateById(id, updatedExpense);
 
       if (!result) {
@@ -76,13 +71,11 @@ export class ExpenseController {
     return expense;
   }
 
-  // Delete
   @Delete(":id")
   @UseGuards(AuthGuard())
   async deleteExpense(@Param("id") id: string): Promise<{ message: string }> {
     try {
       const deletedExpense = await this.expenseService.deleteById(id);
-      console.log(deletedExpense);
 
       if (!deletedExpense) {
         return { message: "Expense not found" };
@@ -101,7 +94,7 @@ export class ExpenseController {
     @Req() req
   ): Promise<{ [key: string]: number }> {
     const user = req.user;
-    return this.expenseService.getFilteredValues(user, query);
+    return this.expenseService.getDailyValues(user, query);
   }
 
   @Get("filter/filteredvaluesByMonth")
@@ -127,10 +120,12 @@ export class ExpenseController {
     );
     return result;
   }
+
   @Get("categories/month-to-date")
   @UseGuards(AuthGuard())
   async getCategoriesMonthToDate(@Query() query: ExpressQuery, @Req() req) {
     const user = req.user;
+
     // Call the service method to get total expenses for categories from the beginning of the month to the specified date
     const result = await this.expenseService.getCategoriesMonthToDate(
       user,

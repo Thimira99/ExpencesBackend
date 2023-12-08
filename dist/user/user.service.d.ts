@@ -1,9 +1,9 @@
-import { Model } from 'mongoose';
-import { User } from './schemas/user.schema';
-import { JwtService } from '@nestjs/jwt';
-import { SignUpDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
-import { CategoryDto } from './dto/category.dto';
+import { Model } from "mongoose";
+import { User } from "./schemas/user.schema";
+import { JwtService } from "@nestjs/jwt";
+import { SignUpDto } from "./dto/signup.dto";
+import { LoginDto } from "./dto/login.dto";
+import { CategoryDto } from "./dto/category.dto";
 export declare class UserService {
     private userModel;
     private jwtService;

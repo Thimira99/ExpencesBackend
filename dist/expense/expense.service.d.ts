@@ -14,7 +14,7 @@ export declare class ExpenseService {
     create(expense: Expense, user: User): Promise<Expense>;
     updateById(id: string, updatedExpense: UpdateExpenseDto): Promise<Expense>;
     deleteById(id: string): Promise<Expense>;
-    getFilteredValues(user: User, query: Query): Promise<{
+    getDailyValues(user: User, query: Query): Promise<{
         [key: string]: number;
     }>;
     getMonthlyValues(user: User, query: Query): Promise<{

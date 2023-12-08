@@ -28,7 +28,7 @@ let UserService = class UserService {
         const { name, email, password } = signUpDto;
         const existingUser = await this.userModel.findOne({ email });
         if (existingUser) {
-            throw new common_1.UnauthorizedException('Email already exists');
+            throw new common_1.UnauthorizedException("Email already exists");
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await this.userModel.create({
@@ -42,11 +42,11 @@ let UserService = class UserService {
         const { email, password } = loginDto;
         const user = await this.userModel.findOne({ email });
         if (!user) {
-            throw new common_1.UnauthorizedException('Invalid email');
+            throw new common_1.UnauthorizedException("Invalid email");
         }
         const isPasswordMatched = await bcrypt.compare(password, user.password);
         if (!isPasswordMatched) {
-            throw new common_1.UnauthorizedException('Invalid password');
+            throw new common_1.UnauthorizedException("Invalid password");
         }
         const token = this.jwtService.sign({
             id: user._id,
@@ -59,7 +59,7 @@ let UserService = class UserService {
         const userId = user._id;
         const userCategories = await this.userModel.findById(userId).exec();
         if (!user) {
-            throw new common_1.NotFoundException('Categories not found');
+            throw new common_1.NotFoundException("Categories not found");
         }
         return userCategories.categories;
     }

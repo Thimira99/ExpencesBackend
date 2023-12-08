@@ -39,21 +39,21 @@ let UserController = class UserController {
     }
 };
 __decorate([
-    (0, common_1.Post)('/signup'),
+    (0, common_1.Post)("/signup"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [signup_dto_1.SignUpDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "signUp", null);
 __decorate([
-    (0, common_1.Post)('/login'),
+    (0, common_1.Post)("/login"),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "login", null);
 __decorate([
-    (0, common_1.Get)('/categories'),
+    (0, common_1.Get)("/categories"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
@@ -61,7 +61,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUserCategories", null);
 __decorate([
-    (0, common_1.Put)('/categories'),
+    (0, common_1.Put)("/categories"),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Body)()),
@@ -70,7 +70,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateUserCategories", null);
 UserController = __decorate([
-    (0, common_1.Controller)('user'),
+    (0, common_1.Controller)("user"),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 exports.UserController = UserController;

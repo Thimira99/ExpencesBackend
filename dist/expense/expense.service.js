@@ -45,7 +45,6 @@ let ExpenseService = class ExpenseService {
             .find(queryn)
             .limit(resPerPage)
             .skip(skip);
-        console.log(expenses);
         return expenses;
     }
     async findById(id) {
@@ -53,7 +52,6 @@ let ExpenseService = class ExpenseService {
     }
     async create(expense, user) {
         const data = Object.assign(expense, { user: user._id });
-        console.log(data);
         const res = await this.expenseModel.create(data);
         return res;
     }
@@ -68,7 +66,7 @@ let ExpenseService = class ExpenseService {
     async deleteById(id) {
         return await this.expenseModel.findByIdAndDelete(id);
     }
-    async getFilteredValues(user, query) {
+    async getDailyValues(user, query) {
         const userId = user._id;
         const calculatedType = query.calculatedType;
         const userCategories = await this.userModel.getUserCategories(userId);

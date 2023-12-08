@@ -30,8 +30,6 @@ let ExpenseController = class ExpenseController {
     }
     async updateExpense(id, updatedExpense) {
         try {
-            console.log(id);
-            console.log(updatedExpense);
             const result = await this.expenseService.updateById(id, updatedExpense);
             if (!result) {
                 throw new common_1.NotFoundException("Expense not found");
@@ -52,7 +50,6 @@ let ExpenseController = class ExpenseController {
     async deleteExpense(id) {
         try {
             const deletedExpense = await this.expenseService.deleteById(id);
-            console.log(deletedExpense);
             if (!deletedExpense) {
                 return { message: "Expense not found" };
             }
@@ -64,7 +61,7 @@ let ExpenseController = class ExpenseController {
     }
     async getFilteredValues(query, req) {
         const user = req.user;
-        return this.expenseService.getFilteredValues(user, query);
+        return this.expenseService.getDailyValues(user, query);
     }
     async getMonthlyValues(query, req) {
         const user = req.user;

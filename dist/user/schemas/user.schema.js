@@ -19,11 +19,11 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "name", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ unique: [true, 'Duplicate email entered'] }),
+    (0, mongoose_1.Prop)({ unique: [true, "Duplicate email entered"] }),
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ default: ['Food', 'Travel', 'Entertainment'] }),
+    (0, mongoose_1.Prop)({ default: ["Food", "Travel", "Entertainment"] }),
     __metadata("design:type", Array)
 ], User.prototype, "categories", void 0);
 __decorate([
