@@ -36,13 +36,13 @@ export class ExpenseService {
       ? (category = [...avalibale])
       : (category = query.category as string).split(",");
 
-    const queryn = {
+    const filterQuery = {
       user: userId,
       category: { $in: category },
     };
 
     const expenses = await this.expenseModel
-      .find(queryn)
+      .find(filterQuery)
       .limit(resPerPage)
       .skip(skip);
 
@@ -58,8 +58,7 @@ export class ExpenseService {
   async create(expense: Expense, user: User): Promise<Expense> {
     const data = Object.assign(expense, { user: user._id });
 
-    const res = await this.expenseModel.create(data);
-    return res;
+    return await this.expenseModel.create(data);
   }
 
   // Update expenses by id
@@ -134,7 +133,6 @@ export class ExpenseService {
           throw new NotFoundException("Invalid calculatedType");
       }
     };
-
     const results = await Promise.all(userCategories.map(filterCategories));
 
     // Merge the individual results into a single object

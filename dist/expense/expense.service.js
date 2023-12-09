@@ -37,12 +37,12 @@ let ExpenseService = class ExpenseService {
         category === "All"
             ? (category = [...avalibale])
             : (category = query.category).split(",");
-        const queryn = {
+        const filterQuery = {
             user: userId,
             category: { $in: category },
         };
         const expenses = await this.expenseModel
-            .find(queryn)
+            .find(filterQuery)
             .limit(resPerPage)
             .skip(skip);
         return expenses;
@@ -52,8 +52,7 @@ let ExpenseService = class ExpenseService {
     }
     async create(expense, user) {
         const data = Object.assign(expense, { user: user._id });
-        const res = await this.expenseModel.create(data);
-        return res;
+        return await this.expenseModel.create(data);
     }
     async updateById(id, updatedExpense) {
         const existingExpense = await this.expenseModel.findById(id);
